@@ -1,4 +1,3 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProjectList from "./components/ProjectList";
@@ -12,9 +11,9 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<ProjectList />} />
-          <Route path="/projects/:projectId/issues" element={<IssueList />} />
-          <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetail />} />
-          <Route path="/projects/:projectId/issues/new" element={<IssueForm />} />
+          <Route path="/projects/:slug/issues" element={<IssueList />} />
+          <Route path="/projects/:slug/issues/new" element={<IssueForm />} />
+          <Route path="/projects/:slug/issues/:pk" element={<IssueDetail />} />
         </Routes>
       </div>
     </Router>

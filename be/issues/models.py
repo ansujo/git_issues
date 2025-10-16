@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify   # ✅ added — to auto-create slugs
 
 class User(models.Model):
     username = models.CharField(max_length=150, unique=True)
@@ -12,6 +13,15 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # 👇 ✅ NEW FIELD
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # ✅ auto-create slug only if it doesn’t exist
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

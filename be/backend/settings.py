@@ -140,3 +140,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     )
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],  # dev only
+}
