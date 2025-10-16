@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProjectList from "./components/ProjectList";
 import IssueList from "./components/IssueList";
 import IssueDetail from "./components/IssueDetail";
-import IssueForm from "./components/IssueForm";
+import NewIssue from "./components/NewIssue"; // ✅ NEW FILE
 
 function App() {
   return (
@@ -13,8 +13,8 @@ function App() {
         <Routes>
           <Route path="/" element={<ProjectList />} />
           <Route path="/projects/:projectId/issues" element={<IssueList />} />
-          <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetail />} />
-          <Route path="/projects/:projectId/issues/new" element={<IssueForm />} />
+          <Route path="/issues/:id" element={<IssueDetail />} /> {/* ✅ fixed route */}
+          <Route path="/projects/:projectId/issues/new" element={<NewIssue />} /> {/* ✅ */}
         </Routes>
       </div>
     </Router>
