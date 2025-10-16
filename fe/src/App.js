@@ -13,8 +13,8 @@ function App() {
         <Routes>
           <Route path="/" element={<ProjectList />} />
           <Route path="/projects/:projectId/issues" element={<IssueList />} />
-          <Route path="/issues/:id" element={<IssueDetail />} /> {/* ✅ fixed route */}
-          <Route path="/projects/:projectId/issues/new" element={<NewIssue />} /> {/* ✅ */}
+          <Route path="/issues/:id" element={<IssueDetail />} /> 
+          <Route path="/projects/:projectId/issues/new" element={<NewIssue />} /> 
         </Routes>
       </div>
     </Router>
@@ -22,3 +22,4 @@ function App() {
 }
 
 export default App;
+
