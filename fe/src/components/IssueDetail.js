@@ -39,7 +39,7 @@ export default function IssueDetail() {
               padding: "8px 15px",
               borderRadius: "4px",
               border: "none",
-              backgroundColor: "#90EE90",
+              backgroundColor: "#53ff5eff",
               color: "#1E1E1E",
               cursor: "pointer",
               fontWeight: "600",
