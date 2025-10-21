@@ -15,34 +15,6 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Issue
-        fields = ['id', 'title', 'description', 'status', 'created_at', 'project']
-        # --- FIX APPLIED HERE ---
-        # The 'project' field is a Foreign Key and is required by default.
-        # We set 'required': False to allow the POST request to pass validation.
-        # The project ID will then be automatically supplied by the view's perform_create method.
-        extra_kwargs = {
-            'project': {'required': False}
-        }
-
-
-from rest_framework import serializers
-from .models import User, Project, Issue
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username']
-
-
-class ProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = ['id', 'name', 'description', 'created_at', 'user']
-
-
-class IssueSerializer(serializers.ModelSerializer):
     assignee = UserSerializer(read_only=True)
     assignee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='assignee', write_only=True, required=False
@@ -51,15 +23,7 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = [
-            'id',
-            'title',
-            'description',
-            'status',
-            'assignee',
-            'assignee_id',
-            'label',
-            'created_at',
-            'project'
+            'id','title','description','status','assignee','assignee_id','label','created_at','project'
         ]
         extra_kwargs = {
             'project': {'required': False}

@@ -35,7 +35,6 @@ const styles = {
     fontWeight: '600',
   },
 };
-
 export default function ProjectList() {
   const [projects, setProjects] = useState([]);
   const navigate = useNavigate();
@@ -65,4 +64,3 @@ export default function ProjectList() {
     </div>
   );
 }
-

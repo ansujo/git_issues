@@ -36,7 +36,7 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
 
-    # 🆕 New fields
+   
     label = models.CharField(max_length=50, choices=LABEL_CHOICES, default='bug')
     assignee = models.ForeignKey(
         User,
