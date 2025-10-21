@@ -78,6 +78,15 @@ class PullReq(models.Model):
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     label = models.CharField(max_length=50, choices=LABEL_CHOICES, default='bug')
+
+    issue = models.ForeignKey(
+        'Issue',                  # assuming your Issue model is called Issue
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pullreqs'
+    )
+    
     assignee = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

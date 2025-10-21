@@ -49,7 +49,7 @@ class PullReqSerializer(serializers.ModelSerializer):
     class Meta:
         model = PullReq
         fields = [
-            'id','title','description','status','assignee','assignee_id','label','created_at','project','reviewer', 'reviewer_id'
+            'id','title','description','status','assignee','assignee_id','label','created_at','project','reviewer', 'reviewer_id','issue',
         ]
         extra_kwargs = {
             'project': {'required': False}

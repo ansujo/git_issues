@@ -45,6 +45,13 @@ export default function ProjectDetail() {
         </button>
 
         <button
+          style={styles.button}
+          onClick={() => navigate(`/projects/${projectId}/pullreqs`)}
+        >
+          Pull Request
+        </button>
+
+        <button
           style={{ ...styles.button, backgroundColor: "#333", color: "#90EE90" }}
           onClick={() => navigate(`/`)}
         >
