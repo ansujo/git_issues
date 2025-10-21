@@ -56,6 +56,8 @@ class Issue(models.Model):
         return f"{self.title} ({self.status})"
 
 
+
+
 class PullReq(models.Model):
     STATUS_CHOICES = [
         ('open', 'Open'),
@@ -89,13 +91,6 @@ class PullReq(models.Model):
         null=True,
         blank=True,
         related_name='review_pul'
-    )
-    issue = models.OneToOneField(
-        Issue,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='pull_request'
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

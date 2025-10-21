@@ -1,6 +1,6 @@
 from rest_framework import serializers
 # Assuming your models are correctly imported here
-from .models import User, Project, Issue
+from .models import User, Project, Issue,PullReq
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,10 +20,36 @@ class IssueSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(), source='assignee', write_only=True, required=False
     )
 
+    reviewer = UserSerializer(read_only=True)
+    reviewer_id= serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='reviewer', write_only=True, required=False
+    )
+
     class Meta:
         model = Issue
         fields = [
-            'id','title','description','status','assignee','assignee_id','label','created_at','project'
+            'id','title','description','status','assignee','assignee_id','label','created_at','project','reviewer', 'reviewer_id'
+        ]
+        extra_kwargs = {
+            'project': {'required': False}
+        }
+
+class PullReqSerializer(serializers.ModelSerializer):
+    assignee = UserSerializer(read_only=True)
+    assignee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='assignee', write_only=True, required=False
+    )
+
+    reviewer = UserSerializer(read_only=True)
+    reviewer_id= serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='reviewer', write_only=True, required=False
+    )
+
+
+    class Meta:
+        model = PullReq
+        fields = [
+            'id','title','description','status','assignee','assignee_id','label','created_at','project','reviewer', 'reviewer_id'
         ]
         extra_kwargs = {
             'project': {'required': False}
