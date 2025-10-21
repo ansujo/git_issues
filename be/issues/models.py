@@ -35,8 +35,6 @@ class Issue(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
-
-   
     label = models.CharField(max_length=50, choices=LABEL_CHOICES, default='bug')
     assignee = models.ForeignKey(
         User,
@@ -45,7 +43,60 @@ class Issue(models.Model):
         blank=True,
         related_name='assigned_issues'
     )
+    reviewer = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='review_issues'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.title} ({self.status})"
+
+
+class PullReq(models.Model):
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('in_progress', 'In Progress'),
+        ('closed', 'Closed'),
+    ]
+
+    LABEL_CHOICES = [
+        ('bug', 'Bug'),
+        ('development','Development'),
+        ('ui', 'Ui'),
+        ('documentation', 'Documentation'),
+        ('feature', 'Feature'),
+    ]
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='pullreqs')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    label = models.CharField(max_length=50, choices=LABEL_CHOICES, default='bug')
+    assignee = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_pull'
+    )
+    reviewer = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='review_pul'
+    )
+    issue = models.OneToOneField(
+        Issue,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pull_request'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
