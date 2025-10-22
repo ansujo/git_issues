@@ -2,52 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../api";
 
-const styles = {
-  container: {
-    backgroundColor: "#1E1E1E",
-    color: "white",
-    minHeight: "100vh",
-    padding: "20px",
-  },
-  breadcrumb: {
-    fontSize: "0.9em",
-    color: "#90EE90",
-    marginBottom: "15px",
-  },
-  breadcrumbLink: {
-    color: "#90EE90",
-    textDecoration: "none",
-    cursor: "pointer",
-  },
-  box: {
-    backgroundColor: "#2D2D2D",
-    padding: "20px",
-    borderRadius: "8px",
-    border: "2px solid #90EE90",
-  },
-  title: { fontSize: "1.5em", marginBottom: "10px" },
-  text: { color: "#90EE90", fontSize: "1em" },
-  buttonBox: { marginTop: "20px", display: "flex", gap: "10px" },
-  button: {
-    backgroundColor: "#90EE90",
-    color: "#1E1E1E",
-    border: "none",
-    padding: "8px 15px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-  deleteButton: {
-    backgroundColor: "#ff4d4d",
-    color: "white",
-    border: "none",
-    padding: "8px 15px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-};
-
 export default function PullReqDetail() {
   const { pullId } = useParams();
   const [pull, setPull] = useState(null);
@@ -114,3 +68,49 @@ export default function PullReqDetail() {
     </div>
   );
 }
+const styles = {
+  container: {
+    backgroundColor: "#1E1E1E",
+    color: "white",
+    minHeight: "100vh",
+    padding: "20px",
+  },
+  breadcrumb: {
+    fontSize: "0.9em",
+    color: "#90EE90",
+    marginBottom: "15px",
+  },
+  breadcrumbLink: {
+    color: "#90EE90",
+    textDecoration: "none",
+    cursor: "pointer",
+  },
+  box: {
+    backgroundColor: "#2D2D2D",
+    padding: "20px",
+    borderRadius: "8px",
+    border: "2px solid #90EE90",
+  },
+  title: { fontSize: "1.5em", marginBottom: "10px" },
+  text: { color: "#90EE90", fontSize: "1em" },
+  buttonBox: { marginTop: "20px", display: "flex", gap: "10px" },
+  button: {
+    backgroundColor: "#90EE90",
+    color: "#1E1E1E",
+    border: "none",
+    padding: "8px 15px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+  deleteButton: {
+    backgroundColor: "#ff4d4d",
+    color: "white",
+    border: "none",
+    padding: "8px 15px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+};
+

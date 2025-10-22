@@ -1,20 +1,21 @@
-// src/components/IssueDetail.js
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api";
 import IssueForm from "./IssueForm";
 
 export default function IssueDetail() {
-  const { id } = useParams();
+  // const { id } = useParams();
+  const {  issueId } = useParams();
+
   const [issue, setIssue] = useState(null);
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    api.get(`/issues/${id}/`).then((res) => setIssue(res.data));
-  }, [id]);
+    api.get(`/issues/${issueId}/`).then((res) => setIssue(res.data));
+  }, [issueId]);
 
   const handleUpdate = (data) => {
-    api.patch(`/issues/${id}/`, data).then((res) => {
+    api.patch(`/issues/${issueId}/`, data).then((res) => {
       setIssue(res.data);
       setEditing(false);
     });

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 
+
+
 export default function PullReqForm({ isEdit = false }) {
   const params = useParams();
   const [projectId, setProjectId] = useState(params.projectId || "");
@@ -33,7 +35,7 @@ export default function PullReqForm({ isEdit = false }) {
     }
   }, [isEdit, pullId, projectId]);
 
-  // Fetch related issues
+  // Fetch related issues and users
   useEffect(() => {
     if (!projectId) return;
     api.get(`/issues/?project=${projectId}`).then((res) => setIssues(res.data));
@@ -81,80 +83,131 @@ export default function PullReqForm({ isEdit = false }) {
   ];
 
   return (
-    <div style={{ backgroundColor: "#1E1E1E", color: "white", minHeight: "100vh", padding: "20px" }}>
-      <h2 style={{ fontSize: "1.5em", marginBottom: "20px" }}>
+    <div style={styles.container}>
+      <h2 style={styles.heading}>
         {isEdit ? "✏️ Edit Pull Request" : "➕ New Pull Request"}
       </h2>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "#2D2D2D", padding: "20px", borderRadius: "8px", border: "2px solid #90EE90" }}
-      >
+      <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="text"
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #90EE90", backgroundColor: "#1E1E1E", color: "white" }}
+          style={styles.input}
         />
 
         <textarea
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #90EE90", backgroundColor: "#1E1E1E", color: "white", height: "100px" }}
+          style={styles.textarea}
         />
 
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #90EE90", backgroundColor: "#1E1E1E", color: "white" }}
+          style={styles.select}
         >
           {STATUS_CHOICES.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
           ))}
         </select>
 
         <select
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #90EE90", backgroundColor: "#1E1E1E", color: "white" }}
+          style={styles.select}
         >
           {LABEL_CHOICES.map((l) => (
-            <option key={l.value} value={l.value}>{l.label}</option>
+            <option key={l.value} value={l.value}>
+              {l.label}
+            </option>
           ))}
         </select>
 
         <select
           value={issue}
           onChange={(e) => setIssue(e.target.value)}
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #90EE90", backgroundColor: "#1E1E1E", color: "white" }}
+          style={styles.select}
         >
           <option value="">Select Issue (optional)</option>
           {issues.map((i) => (
-            <option key={i.id} value={i.id}>{i.title}</option>
+            <option key={i.id} value={i.id}>
+              {i.title}
+            </option>
           ))}
         </select>
 
         <select
           value={assignee}
           onChange={(e) => setAssignee(e.target.value)}
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #90EE90", backgroundColor: "#1E1E1E", color: "white" }}
+          style={styles.select}
         >
           <option value="">Unassigned</option>
           {users.map((u) => (
-            <option key={u.id} value={u.id}>{u.username}</option>
+            <option key={u.id} value={u.id}>
+              {u.username}
+            </option>
           ))}
         </select>
 
-        <button
-          type="submit"
-          style={{ padding: "10px", borderRadius: "4px", border: "none", backgroundColor: "#90EE90", color: "#1E1E1E", fontWeight: "600", cursor: "pointer" }}
-        >
+        <button type="submit" style={styles.button}>
           {isEdit ? "💾 Update" : "➕ Create"}
         </button>
       </form>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: "600px",
+    margin: "40px auto",
+    padding: "20px",
+    backgroundColor: "#f9f9f9",
+    borderRadius: "12px",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+  },
+  heading: {
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#333",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+  input: {
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    fontSize: "16px",
+  },
+  textarea: {
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    fontSize: "16px",
+    minHeight: "100px",
+  },
+  select: {
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    fontSize: "16px",
+  },
+  button: {
+    padding: "12px",
+    border: "none",
+    borderRadius: "8px",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    fontSize: "16px",
+    cursor: "pointer",
+  },
+};

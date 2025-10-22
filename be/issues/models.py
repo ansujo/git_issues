@@ -68,6 +68,7 @@ class PullReq(models.Model):
     LABEL_CHOICES = [
         ('bug', 'Bug'),
         ('development','Development'),
+         ('enhancement', 'Enhancement'),
         ('ui', 'Ui'),
         ('documentation', 'Documentation'),
         ('feature', 'Feature'),
@@ -86,7 +87,7 @@ class PullReq(models.Model):
         blank=True,
         related_name='pullreqs'
     )
-    
+
     assignee = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

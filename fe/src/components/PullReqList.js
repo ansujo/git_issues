@@ -2,6 +2,116 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../api";
 
+export default function PullReqList() {
+  const { projectId } = useParams();
+  const [pullReqs, setPullReqs] = useState([]);
+  const [projectName, setProjectName] = useState("Loading...");
+  const navigate = useNavigate();
+
+  // ✅ Fetch pull requests
+  const fetchPullReqs = useCallback(() => {
+    api
+      .get(`/pullreqs/?project=${projectId}`)
+      .then((res) => setPullReqs(res.data))
+      .catch((err) => console.error("Error fetching pull requests:", err));
+  }, [projectId]);
+
+  // ✅ Fetch project name
+  useEffect(() => {
+    api
+      .get(`/projects/${projectId}/`)
+      .then((res) => setProjectName(res.data.name))
+      .catch(() => setProjectName("Unknown Project"));
+
+    fetchPullReqs();
+  }, [projectId, fetchPullReqs]);
+
+  // ✅ Navigation and delete handlers
+  const handleOpen = (pullId) => navigate(`/pullreqs/${pullId}`);
+
+
+  const handleDelete = async (pullId) => {
+    if (window.confirm("Are you sure you want to delete this pull request?")) {
+      try {
+        await api.delete(`/pullreqs/${pullId}/`);
+        setPullReqs((prev) => prev.filter((p) => p.id !== pullId));
+      } catch (error) {
+        console.error("Error deleting pull request:", error);
+      }
+    }
+  };
+
+  return (
+    <div style={styles.container}>
+      {/* ✅ Breadcrumb */}
+      <div style={styles.breadcrumb}>
+        <Link to="/" style={styles.breadcrumbLink}>Projects</Link>
+        {"  >  "}
+        <Link
+          to={`/projects/${projectId}/pdetails`}
+          style={styles.breadcrumbLink}
+        >
+          {projectName}
+        </Link>
+        {"  >  "}
+        <span>Pull Requests</span>
+      </div>
+
+      {/* ✅ Top Bar */}
+      <div style={styles.topBar}>
+        <button
+          style={styles.backButton}
+          onClick={() => navigate(`/projects/${projectId}/pdetails`)}
+        >
+          ⬅ Back to Project
+        </button>
+
+        <Link
+          to={`/projects/${projectId}/pullreqs/new`}
+          style={styles.addButton}
+        >
+          ➕ Add Pull Request
+        </Link>
+      </div>
+
+    
+      <h2>Pull Requests for Project: {projectName}</h2>
+
+
+      {pullReqs.length === 0 ? (
+        <p>No pull requests available.</p>
+      ) : (
+        pullReqs.map((pr) => (
+          <div key={pr.id} style={styles.itemBox}>
+            <div>
+              <span style={styles.itemText}>{pr.title}</span>
+              <span style={styles.itemInfo}>
+                ({pr.status} | {pr.label || "No Label"} |{" "}
+                {pr.assignee?.username || "Unassigned"})
+              </span>
+            </div>
+            <div style={styles.buttonGroup}>
+              <button
+                onClick={() => handleOpen(pr.id)}
+                style={styles.button}
+              >
+                Open
+              </button>
+              <button
+                onClick={() => handleDelete(pr.id)}
+                style={styles.deleteButton}
+              >
+                🗑 Delete
+              </button>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+
 const styles = {
   container: {
     backgroundColor: "#1E1E1E",
@@ -76,111 +186,3 @@ const styles = {
     fontWeight: "600",
   },
 };
-
-export default function PullReqList() {
-  const { projectId } = useParams();
-  const [pullReqs, setPullReqs] = useState([]);
-  const [projectName, setProjectName] = useState("Loading...");
-  const navigate = useNavigate();
-
-  // ✅ Fetch pull requests
-  const fetchPullReqs = useCallback(() => {
-    api
-      .get(`/pullreqs/?project=${projectId}`)
-      .then((res) => setPullReqs(res.data))
-      .catch((err) => console.error("Error fetching pull requests:", err));
-  }, [projectId]);
-
-  // ✅ Fetch project name
-  useEffect(() => {
-    api
-      .get(`/projects/${projectId}/`)
-      .then((res) => setProjectName(res.data.name))
-      .catch(() => setProjectName("Unknown Project"));
-
-    fetchPullReqs();
-  }, [projectId, fetchPullReqs]);
-
-  // ✅ Navigation and delete handlers
-  const handleOpen = (pullId) => navigate(`/pullreqs/${pullId}`);
-
-  const handleDelete = async (pullId) => {
-    if (window.confirm("Are you sure you want to delete this pull request?")) {
-      try {
-        await api.delete(`/pullreqs/${pullId}/`);
-        setPullReqs((prev) => prev.filter((p) => p.id !== pullId));
-      } catch (error) {
-        console.error("Error deleting pull request:", error);
-      }
-    }
-  };
-
-  return (
-    <div style={styles.container}>
-      {/* ✅ Breadcrumb */}
-      <div style={styles.breadcrumb}>
-        <Link to="/" style={styles.breadcrumbLink}>Projects</Link>
-        {"  >  "}
-        <Link
-          to={`/projects/${projectId}/pdetails`}
-          style={styles.breadcrumbLink}
-        >
-          {projectName}
-        </Link>
-        {"  >  "}
-        <span>Pull Requests</span>
-      </div>
-
-      {/* ✅ Top Bar */}
-      <div style={styles.topBar}>
-        <button
-          style={styles.backButton}
-          onClick={() => navigate(`/projects/${projectId}/pdetails`)}
-        >
-          ⬅ Back to Project
-        </button>
-
-        <Link
-          to={`/projects/${projectId}/pullreqs/new`}
-          style={styles.addButton}
-        >
-          ➕ Add Pull Request
-        </Link>
-      </div>
-
-      {/* ✅ Title */}
-      <h2>Pull Requests for Project: {projectName}</h2>
-
-      {/* ✅ Pull Request List */}
-      {pullReqs.length === 0 ? (
-        <p>No pull requests available.</p>
-      ) : (
-        pullReqs.map((pr) => (
-          <div key={pr.id} style={styles.itemBox}>
-            <div>
-              <span style={styles.itemText}>{pr.title}</span>
-              <span style={styles.itemInfo}>
-                ({pr.status} | {pr.label || "No Label"} |{" "}
-                {pr.assignee?.username || "Unassigned"})
-              </span>
-            </div>
-            <div style={styles.buttonGroup}>
-              <button
-                onClick={() => handleOpen(pr.id)}
-                style={styles.button}
-              >
-                Open
-              </button>
-              <button
-                onClick={() => handleDelete(pr.id)}
-                style={styles.deleteButton}
-              >
-                🗑 Delete
-              </button>
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-  );
-}
