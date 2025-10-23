@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../api";
+import api, { getCookie } from "../api";
 
 
 
@@ -43,30 +43,60 @@ export default function PullReqForm({ isEdit = false }) {
   }, [projectId]);
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      title,
-      description,
-      status,
-      label,
-      project: Number(projectId),
-      issue: issue ? Number(issue) : null,
-      assignee: assignee ? Number(assignee) : null,
-    };
-    console.log("Submitting payload:", payload);
 
-    try {
-      if (isEdit) {
-        await api.put(`/pullreqs/${pullId}/`, payload);
-      } else {
-        await api.post("/pullreqs/", payload);
-      }
-      navigate(`/projects/${projectId}/pullreqs`);
-    } catch (err) {
-      console.error("Error saving pull request:", err);
-    }
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  const payload = {
+    title,
+    description,
+    status,
+    label,
+    project: Number(projectId),
+    issue: issue ? Number(issue) : null,
+    assignee: assignee ? Number(assignee) : null,
   };
+  console.log("Submitting payload:", payload);
+
+  try {
+    const csrfToken = getCookie("csrftoken");
+    if (isEdit) {
+      await api.put(`/pullreqs/${pullId}/`, payload, {
+        headers: { "X-CSRFToken": csrfToken },
+      });
+    } else {
+      await api.post("/pullreqs/", payload, {
+        headers: { "X-CSRFToken": csrfToken },
+      });
+    }
+    navigate(`/projects/${projectId}/pullreqs`);
+  } catch (err) {
+    console.error("Error saving pull request:", err);
+  }
+};
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     const payload = {
+//       title,
+//       description,
+//       status,
+//       label,
+//       project: Number(projectId),
+//       issue: issue ? Number(issue) : null,
+//       assignee: assignee ? Number(assignee) : null,
+//     };
+//     console.log("Submitting payload:", payload);
+
+//     try {
+//       if (isEdit) {
+//         await api.put(`/pullreqs/${pullId}/`, payload);
+//       } else {
+//         await api.post("/pullreqs/", payload);
+//       }
+//       navigate(`/projects/${projectId}/pullreqs`);
+//     } catch (err) {
+//       console.error("Error saving pull request:", err);
+//     }
+//   };
 
   const STATUS_CHOICES = [
     { value: "open", label: "Open" },

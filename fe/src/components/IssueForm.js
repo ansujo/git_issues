@@ -20,7 +20,7 @@ export default function IssueForm({ issue = {}, onSubmit }) {
       console.error("onSubmit function not passed to IssueForm");
       return;
     }
-    onSubmit({ title, description, status, label, assignee_id: assignee || null });
+    onSubmit({ title, description, status, label, assignee: assignee || null });
   };
 
   const STATUS_CHOICES = [

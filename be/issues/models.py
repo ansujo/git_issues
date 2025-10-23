@@ -1,10 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-class User(models.Model):
-    username = models.CharField(max_length=150, unique=True)
-
-    def __str__(self):
-        return self.username
+User = get_user_model()
 
 
 class Project(models.Model):

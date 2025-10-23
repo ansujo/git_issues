@@ -1,5 +1,4 @@
 from rest_framework import serializers
-# Assuming your models are correctly imported here
 from .models import User, Project, Issue,PullReq
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 // src/components/NewIssue.js
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../api";
+import api, { getCookie } from "../api";
 import IssueForm from "./IssueForm";
 
 export default function NewIssue() {
@@ -9,9 +9,23 @@ export default function NewIssue() {
   const { projectId } = useParams();
 
   const handleCreate = (data) => {
-    api.post("/issues/", { ...data, project: projectId }).then((res) => {
-      navigate(`/projects/${projectId}/issues`);
-    });
+  const csrfToken = getCookie("csrftoken");
+
+    api.post(
+      "/issues/",
+      { ...data, project: projectId },
+      {
+        headers: {
+          "X-CSRFToken": csrfToken, // include CSRF token
+        },
+      }
+    )
+      .then((res) => {
+        navigate(`/projects/${projectId}/issues`);
+      })
+      .catch((err) => {
+        console.error("Error creating issue:", err);
+      });
   };
 
   return (

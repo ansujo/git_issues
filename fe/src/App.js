@@ -1,8 +1,6 @@
 // src/App.js
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-
-// your existing components
 import ProjectList from "./components/ProjectList";
 import IssueList from "./components/IssueList";
 import IssueDetail from "./components/IssueDetail";
@@ -11,15 +9,12 @@ import ProjectDetail from "./components/ProjectDetail";
 import PullReqList from "./components/PullReqList";
 import PullReqForm from "./components/PullReqForm";
 import PullReqDetail from "./components/PullReqDetail";
-
-// newly added
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import { initCSRF } from "./api"; // to initialize CSRF token once
 
-// helper layout for conditional navbar rendering
 function LayoutWithNavbar() {
   const location = useLocation();
 

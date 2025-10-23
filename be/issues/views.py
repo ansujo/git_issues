@@ -8,36 +8,18 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
 from django.views.decorators.csrf import ensure_csrf_cookie
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def check_auth(request):
     return Response({"user": request.user.username})
 
-# from django.http import JsonResponse
-# from django.contrib.auth.decorators import login_required
-
-
-# @login_required
-# def check_auth(request):
-#     return JsonResponse({"authenticated": True, "user": request.user.username})
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return Response({"message": "CSRF cookie set"})
-
 
 
 @api_view(['POST'])
