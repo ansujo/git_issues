@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api, { getCookie } from "../api";
+// import api, { getCookie } from "../api";
+import api from "../api";
 
 
 
@@ -58,15 +59,11 @@ export default function PullReqForm({ isEdit = false }) {
   console.log("Submitting payload:", payload);
 
   try {
-    const csrfToken = getCookie("csrftoken");
+    // const csrfToken = getCookie("csrftoken");
     if (isEdit) {
-      await api.put(`/pullreqs/${pullId}/`, payload, {
-        headers: { "X-CSRFToken": csrfToken },
-      });
+      await api.put(`/pullreqs/${pullId}/`, payload);
     } else {
-      await api.post("/pullreqs/", payload, {
-        headers: { "X-CSRFToken": csrfToken },
-      });
+      await api.post("/pullreqs/", payload);
     }
     navigate(`/projects/${projectId}/pullreqs`);
   } catch (err) {

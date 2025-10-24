@@ -1,30 +1,51 @@
-// src/api.js
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "/api",
-  withCredentials: true, // important for CSRF/session cookies
-});
 
 
-
-// --- Named helper functions ---
-
-// Initialize CSRF token (if your Django backend uses CSRF protection)
+// ---- Initialize CSRF token (optional, can call once at startup) ----
 export const initCSRF = async () => {
   try {
-    await api.get("/csrf/");
+    await api.get("/get-csrf-token/"); // or your endpoint: /csrf/
   } catch (error) {
     console.error("CSRF init failed:", error);
   }
 };
 
-export function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  if (match) return match[2];
-  return null;
+// ---- Helper: Get CSRF token from cookie ----
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
 }
 
+// ---- Create axios instance ----
+const api = axios.create({
+  baseURL: "http://127.0.0.1:8000/api", // change to http://127.0.0.1:8000/api if not using proxy
+  withCredentials: true, // important for CSRF + session cookies
+});
+
+// ---- Global interceptor to automatically attach CSRF token ----
+api.interceptors.request.use((config) => {
+  const csrfToken = getCookie("csrftoken");
+
+  // Only attach CSRF for write operations
+  if (["post", "put", "patch", "delete"].includes(config.method) && csrfToken) {
+    config.headers["X-CSRFToken"] = csrfToken;
+  }
+
+  return config;
+});
+
+// ---- Auth-related API functions ----
 
 // Login user
 export const login = async (username, password) => {
@@ -40,18 +61,12 @@ export const login = async (username, password) => {
 // Logout user
 export const logout = async () => {
   try {
-    const csrfToken = getCookie("csrftoken");
-    await api.post("/logout/", {}, {
-      headers: {
-        "X-CSRFToken": csrfToken
-      }
-    });
+    await api.post("/logout/");
   } catch (error) {
     console.error("Logout failed:", error);
     throw error;
   }
 };
-
 
 // Register new user
 export const register = async (username, email, password) => {
@@ -68,4 +83,4 @@ export const register = async (username, email, password) => {
   }
 };
 
-export default api
+export default api;

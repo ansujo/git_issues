@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-// import api from "../api";
+import api from "../api";
 import IssueForm from "./IssueForm";
-import api, { getCookie } from "../api";
+// import api, { getCookie } from "../api";
 
 export default function IssueDetail() {
   // const { id } = useParams();
@@ -21,18 +21,7 @@ export default function IssueDetail() {
   //     setEditing(false);
   //   });
   // };
-const handleUpdate = (data) => {
-  const csrfToken = getCookie("csrftoken"); // get CSRF token from cookie
-
-  api.patch(
-    `/issues/${issueId}/`,
-    data,
-    {
-      headers: {
-        "X-CSRFToken": csrfToken, // include CSRF token
-      },
-    }
-  )
+const handleUpdate = (data) => {api.patch(`/issues/${issueId}/`,data,)
     .then((res) => {
       setIssue(res.data);
       setEditing(false);
@@ -41,9 +30,6 @@ const handleUpdate = (data) => {
       console.error("Error updating issue:", err);
     });
 };
-
-
-
 
   if (!issue) return <div style={{ color: "white", padding: "20px" }}>Loading...</div>;
 
