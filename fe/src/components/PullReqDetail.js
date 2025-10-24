@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import api from "../api";
+import api,{ getCookie } from "../api";
 
 export default function PullReqDetail() {
   const { pullId } = useParams();
@@ -15,9 +15,14 @@ export default function PullReqDetail() {
   }, [pullId]);
 
   const handleDelete = async () => {
+    const csrfToken = getCookie("csrftoken")
     if (window.confirm("Are you sure you want to delete this pull request?")) {
       try {
-        await api.delete(`/pullreqs/${pullId}/`);
+        await api.delete(`/pullreqs/${pullId}/`,{
+          headers:{
+            "X-CSRFToken": csrfToken,
+          }
+        });
         navigate(-1);
       } catch (err) {
         console.error("Error deleting pull request:", err);

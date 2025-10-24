@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import api from "../api";
+import api,{ getCookie } from "../api";
+
 
 export default function IssueList() {
   const { projectId } = useParams();
@@ -28,9 +29,16 @@ export default function IssueList() {
     navigate(`/projects/${projectId}/issues/${issueId}`);
 
   const handleDelete = async (issueId) => {
+    const csrfToken = getCookie("csrftoken");
     if (window.confirm("Are you sure you want to delete this issue?")) {
       try {
-        await api.delete(`/issues/${issueId}/`);
+
+        await api.delete(`/issues/${issueId}/`,{
+      headers: {
+        "X-CSRFToken": csrfToken, // include CSRF token
+      },
+    }
+  );
         setIssues((prev) => prev.filter((i) => i.id !== issueId));
       } catch (error) {
         console.error("Error deleting issue:", error);
