@@ -44,11 +44,16 @@ class PullReqSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(), source='reviewer', write_only=True, required=False
     )
 
+    issue= IssueSerializer(read_only=True)
+    issue_id= serializers.PrimaryKeyRelatedField(
+        queryset=Issue.objects.all(),source='issue',write_only=True,required=False
+    )
+
 
     class Meta:
         model = PullReq
         fields = [
-            'id','title','description','status','assignee','assignee_id','label','created_at','project','reviewer', 'reviewer_id','issue',
+            'id','title','description','status','assignee','assignee_id','label','created_at','project','reviewer', 'reviewer_id','issue','issue_id',
         ]
         extra_kwargs = {
             'project': {'required': False}

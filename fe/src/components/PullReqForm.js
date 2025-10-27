@@ -52,8 +52,9 @@ export default function PullReqForm({ isEdit = false }) {
     status,
     label,
     project: Number(projectId),
-    issue: issue ? Number(issue) : null,
-    assignee: assignee ? Number(assignee) : null,
+    issue_id: issue ? Number(issue) : null,
+    // assignee: assignee ? Number(assignee) : null,
+    assignee_id: assignee ? parseInt(assignee, 10) : null,
   };
   console.log("Submitting payload:", payload);
 

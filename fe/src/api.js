@@ -29,7 +29,12 @@ export function getCookie(name) {
 // Login user
 export const login = async (username, password) => {
   try {
-    const response = await api.post("/login/", { username, password });
+    const csrfToken=getCookie("csrftoken")
+    const response = await api.post("/login/", { username, password },{
+      headers: {
+        "X-CSRFToken": csrfToken, // include CSRF token
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Login failed:", error);
@@ -56,11 +61,15 @@ export const logout = async () => {
 // Register new user
 export const register = async (username, email, password) => {
   try {
+    const csrfToken = getCookie("csrftoken");
     const response = await api.post("/register/", {
       username,
       email,
       password,
-    });
+    },
+      {headers: {
+          "X-CSRFToken": csrfToken
+        }});
     return response.data;
   } catch (error) {
     console.error("Register failed:", error);

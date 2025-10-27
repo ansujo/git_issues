@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+
+# from django.contrib.auth.models import User
+
 
 User = get_user_model()
 
@@ -26,6 +30,7 @@ class Issue(models.Model):
         ('enhancement', 'Enhancement'),
         ('documentation', 'Documentation'),
         ('feature', 'Feature'),
+        ('ui', 'Ui'),
     ]
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='issues')
@@ -39,6 +44,8 @@ class Issue(models.Model):
         null=True,
         blank=True,
         related_name='assigned_issues'
+
+        # hfyghj
     )
     reviewer = models.ForeignKey(
         User,
@@ -65,7 +72,7 @@ class PullReq(models.Model):
     LABEL_CHOICES = [
         ('bug', 'Bug'),
         ('development','Development'),
-         ('enhancement', 'Enhancement'),
+        ('enhancement', 'Enhancement'),
         ('ui', 'Ui'),
         ('documentation', 'Documentation'),
         ('feature', 'Feature'),
@@ -103,3 +110,22 @@ class PullReq(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.status})"
+
+class UserPermission(models.Model):
+    RESOURCE_CHOICES=[
+        ("issue", "Issue"),
+        ("pullreq", "Pull Request"),
+        ("project", "Project"),
+    ]
+
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    resource=models.CharField(max_length=20,choices=RESOURCE_CHOICES)
+    can_view=models.BooleanField(default=False)
+    can_delete=models.BooleanField(default=False)
+    can_edit=models.BooleanField(default=False)
+    can_create=models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}->{self.resource}"
+
+    
