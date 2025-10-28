@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import ProjectList from "./components/ProjectList";
@@ -17,9 +16,7 @@ import { initCSRF } from "./api"; // to initialize CSRF token once
 
 function LayoutWithNavbar() {
   const location = useLocation();
-
-  // hide navbar on login & register pages
-  const hideNavbar = ["/login", "/register"].includes(location.pathname);
+  const hideNavbar = ["/login", "/register"].includes(location.pathname);//hide navbar
 
   return (
     <>
@@ -108,7 +105,6 @@ function LayoutWithNavbar() {
 }
 
 function App() {
-  // initialize CSRF token on app load
   useEffect(() => {
     initCSRF();
   }, []);

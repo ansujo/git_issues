@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-// import api from "../api";
 import IssueForm from "./IssueForm";
 import api, { getCookie } from "../api";
 
 export default function IssueDetail() {
-  // const { id } = useParams();
   const {  issueId } = useParams();
-
   const [issue, setIssue] = useState(null);
   const [editing, setEditing] = useState(false);
 
@@ -15,12 +12,6 @@ export default function IssueDetail() {
     api.get(`/issues/${issueId}/`).then((res) => setIssue(res.data));
   }, [issueId]);
 
-  // const handleUpdate = (data) => {
-  //   api.patch(`/issues/${issueId}/`, data).then((res) => {
-  //     setIssue(res.data);
-  //     setEditing(false);
-  //   });
-  // };
 const handleUpdate = (data) => {
   const csrfToken = getCookie("csrftoken"); // get CSRF token from cookie
 
@@ -42,11 +33,7 @@ const handleUpdate = (data) => {
     });
 };
 
-
-
-
-  if (!issue) return <div style={{ color: "white", padding: "20px" }}>Loading...</div>;
-
+if (!issue) return <div style={{ color: "white", padding: "20px" }}>Loading...</div>;
   return (
     <div style={{ padding: "20px", color: "white", backgroundColor: "#1E1E1E", minHeight: "100vh" }}>
       {editing ? (

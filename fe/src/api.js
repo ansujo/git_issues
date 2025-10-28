@@ -6,11 +6,6 @@ const api = axios.create({
   withCredentials: true, // important for CSRF/session cookies
 });
 
-
-
-// --- Named helper functions ---
-
-// Initialize CSRF token (if your Django backend uses CSRF protection)
 export const initCSRF = async () => {
   try {
     await api.get("/csrf/");
@@ -25,8 +20,6 @@ export function getCookie(name) {
   return null;
 }
 
-
-// Login user
 export const login = async (username, password) => {
   try {
     const csrfToken=getCookie("csrftoken")
@@ -42,7 +35,6 @@ export const login = async (username, password) => {
   }
 };
 
-// Logout user
 export const logout = async () => {
   try {
     const csrfToken = getCookie("csrftoken");
@@ -57,8 +49,6 @@ export const logout = async () => {
   }
 };
 
-
-// Register new user
 export const register = async (username, email, password) => {
   try {
     const csrfToken = getCookie("csrftoken");
