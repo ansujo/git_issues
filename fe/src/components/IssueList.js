@@ -7,13 +7,16 @@ export default function IssueList() {
   const { projectId } = useParams();
   const [issues, setIssues] = useState([]);
   const [projectName, setProjectName] = useState("Loading...");
+  const [denied,setDenied]=useState(false)
   const navigate = useNavigate();
 
   const fetchIssues = useCallback(() => {
     api
       .get(`/issues/?project=${projectId}`)
       .then((res) => setIssues(res.data))
-      .catch((err) => console.error("Error fetching issues:", err));
+      .catch((err) => {
+        if (err.response?.status === 403) setDenied(true);
+        console.error("Error fetching issues:", err)});
   }, [projectId]);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ export default function IssueList() {
   );
         setIssues((prev) => prev.filter((i) => i.id !== issueId));
       } catch (error) {
+        if (error.response?.status === 403) setDenied(true);
         console.error("Error deleting issue:", error);
       }
     }
@@ -48,6 +52,8 @@ export default function IssueList() {
 
   return (
     <div style={styles.container}>
+
+
       {/* Breadcrumb */}
       <div style={styles.breadcrumb}>
         <Link to="/" style={styles.breadcrumbLink}>Projects</Link> {" > "}
@@ -55,6 +61,10 @@ export default function IssueList() {
           {projectName}
         </Link> {" > "} <span>Issues</span>
       </div>
+      
+
+
+
 
       {/* Top bar */}
       <div style={styles.topBar}>
@@ -72,47 +82,63 @@ export default function IssueList() {
 
       <h2>Issues for Project: {projectName}</h2>
 
-      {issues.length === 0 ? (
-        <p>No issues available.</p>
-      ) : (
-        <table style={styles.table}>
-          <thead>
-            <tr style={styles.tableHeaderRow}>
-              <th style={styles.th}>Title</th>
-              <th style={styles.th}>Status</th>
-              <th style={styles.th}>Label</th>
-              <th style={styles.th}>Assignee</th>
-              <th style={styles.th}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {issues.map((issue) => (
-              <tr key={issue.id} style={styles.tableRow}>
-                <td style={styles.td}>{issue.title}</td>
-                <td style={styles.td}>{issue.status}</td>
-                <td style={styles.td}>{issue.label || "No Label"}</td>
-                <td style={styles.td}>
-                  {issue.assignee?.username || "Unassigned"}
-                </td>
-                <td style={styles.td}>
-                  <button
-                    onClick={() => handleOpen(issue.id)}
-                    style={styles.button}
-                  >
-                    Open
-                  </button>
-                  <button
-                    onClick={() => handleDelete(issue.id)}
-                    style={styles.deleteButton}
-                  >
-                    🗑 Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    {denied ? (
+      <div style={{ textAlign: "center", marginTop: "40px" }}>
+        <img
+          src="/accessdenied.png"
+          alt="Access Denied"
+          style={{ width: "250px", marginBottom: "20px" }}
+        />
+        <h2>Access Denied</h2>
+        <p>You don't have permission to view these issues.</p>
+      </div>
+    ) : (
+        <>
+          {issues.length === 0 ? (
+            <p>No issues available.</p>
+          ) : (
+            <table style={styles.table}>
+              <thead>
+                <tr style={styles.tableHeaderRow}>
+                  <th style={styles.th}>Title</th>
+                  <th style={styles.th}>Status</th>
+                  <th style={styles.th}>Label</th>
+                  <th style={styles.th}>Assignee</th>
+                  <th style={styles.th}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {issues.map((issue) => (
+                  <tr key={issue.id} style={styles.tableRow}>
+                    <td style={styles.td}>{issue.title}</td>
+                    <td style={styles.td}>{issue.status}</td>
+                    <td style={styles.td}>{issue.label || "No Label"}</td>
+                    <td style={styles.td}>
+                      {issue.assignee?.username || "Unassigned"}
+                    </td>
+                    <td style={styles.td}>
+                      <button
+                        onClick={() => handleOpen(issue.id)}
+                        style={styles.button}
+                      >
+                        Open
+                      </button>
+                      <button
+                        onClick={() => handleDelete(issue.id)}
+                        style={styles.deleteButton}
+                      >
+                        🗑 Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+      </>
       )}
+
     </div>
   );
 }

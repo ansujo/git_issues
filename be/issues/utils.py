@@ -21,4 +21,4 @@ def check_user_permission(request,resource,action):
     elif action == "view" and not perm.can_view:
         return Response({"error": f"You are not allowed to view {resource}"}, status=status.HTTP_403_FORBIDDEN)
     
-    return None
+    return True

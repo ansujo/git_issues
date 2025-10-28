@@ -6,6 +6,33 @@ const api = axios.create({
   withCredentials: true, // important for CSRF/session cookies
 });
 
+let showGlobalError = null;
+
+export function setGlobalErrorHandler(callback) {
+  showGlobalError = callback;
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      const backendMessage =
+        // error.response.data?.detail ||
+        // error.response.data?.message ||
+        error.response.data?.error ||
+        null;
+
+      if (error.response.status === 403) {
+        showGlobalError?.(backendMessage||"Access Denied: You don't have permission to do this activity");
+      } else if (error.response.status === 401) {
+        showGlobalError?.("You are not logged in or your session expired.");
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+
 export const initCSRF = async () => {
   try {
     await api.get("/csrf/");

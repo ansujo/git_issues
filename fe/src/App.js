@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect , useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import ProjectList from "./components/ProjectList";
 import IssueList from "./components/IssueList";
@@ -12,7 +12,9 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
-import { initCSRF } from "./api"; // to initialize CSRF token once
+// import
+import { initCSRF ,setGlobalErrorHandler} from "./api"; // to initialize CSRF token once
+import Errorpop from "./components/Errorpop";
 
 function LayoutWithNavbar() {
   const location = useLocation();
@@ -105,13 +107,21 @@ function LayoutWithNavbar() {
 }
 
 function App() {
+
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     initCSRF();
+    setGlobalErrorHandler(setErrorMessage);
   }, []);
 
   return (
     <Router>
       <LayoutWithNavbar />
+      <Errorpop
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      />
     </Router>
   );
 }
