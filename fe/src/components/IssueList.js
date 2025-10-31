@@ -2,13 +2,22 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api,{ getCookie } from "../api";
 
+import { usePermissions } from "../context/PermissionContext";
+
 
 export default function IssueList() {
+
+
   const { projectId } = useParams();
   const [issues, setIssues] = useState([]);
   const [projectName, setProjectName] = useState("Loading...");
   const [denied,setDenied]=useState(false)
   const navigate = useNavigate();
+
+
+  const { permissions } = usePermissions();
+  const canDeleteIssue = permissions?.issue?.delete === true;
+  console.log(canDeleteIssue)
 
   const fetchIssues = useCallback(() => {
     api

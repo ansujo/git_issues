@@ -12,6 +12,29 @@ from .serializers import RoleSerializer, UserRoleSerializer
 from .base_viewset import BaseViewSet
 User = get_user_model()
 
+def default_permissions():
+    return {
+        "project": {"view": True, "create": False, "update": False, "delete": False},
+        "issue": {"view": True, "create": False, "update": False, "delete": False},
+        "pullreqs": {"view": False, "create": False, "update": False, "delete": False},
+    }
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def my_permissions(request):
+    user_role = getattr(request.user, "assigned_role", None)
+    
+    if user_role and user_role.role:
+        role_name = user_role.role.name
+        permissions = user_role.role.permissions
+    else:
+        role_name = None
+        permissions = default_permissions()  # fallback
+
+    return Response({
+        "role": role_name,
+        "permissions": permissions
+    })
 
 
 @api_view(["GET"])

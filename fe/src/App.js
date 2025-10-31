@@ -1,3 +1,4 @@
+import { PermissionProvider } from "./context/PermissionContext";
 import React, { useEffect , useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import ProjectList from "./components/ProjectList";
@@ -28,6 +29,7 @@ function LayoutWithNavbar() {
 
 
   return (
+    
     <>
     {!hideNavbar && <Navbar />}
     {/* Show admin navbar when on admin routes */}
@@ -142,13 +144,18 @@ function App() {
 
   return (
     <Router>
+      <PermissionProvider>
       <LayoutWithNavbar />
       <Errorpop
         message={errorMessage}
         onClose={() => setErrorMessage("")}
       />
+      </PermissionProvider>
     </Router>
   );
 }
 
 export default App;
+
+
+

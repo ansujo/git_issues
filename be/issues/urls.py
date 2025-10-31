@@ -13,8 +13,10 @@ from .views import (
     login_view,
     logout_view,
     check_auth,
-    get_csrf_token
+    get_csrf_token,
+    my_permissions
 )
+
 
 router = DefaultRouter()
 router.register('roles', RoleViewSet)
@@ -27,6 +29,7 @@ router.register('users', UserViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('check-auth/', check_auth, name='check-auth'),
+    path("auth/my-permissions/", my_permissions, name="my_permissions"),
     path('register/', register_view, name='register'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),

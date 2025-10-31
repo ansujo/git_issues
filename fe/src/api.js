@@ -55,6 +55,7 @@ export const login = async (username, password) => {
         "X-CSRFToken": csrfToken, // include CSRF token
       },
     });
+    api.get("/auth/my-permissions/");
     return response.data;
   } catch (error) {
     console.error("Login failed:", error);
