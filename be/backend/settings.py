@@ -86,12 +86,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 #     }
 # }
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
+        'NAME': 'ansu_db',
+        'USER': 'ansu',
+        'PASSWORD': 'ansu@post123',
         'HOST': 'localhost',  # or '127.0.0.1'
         'PORT': '5432',       # default PostgreSQL port
     }
@@ -156,13 +157,14 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",  # React frontend
+    "http://localhost:3000",  # React frontend
+    "http://127.0.0.1:3000",
 ]
 
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 # Optional: easier debugging

@@ -1,12 +1,39 @@
 from django.db import models
+from django.db.models import JSONField
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
-
-# from django.contrib.auth.models import User
 
 
 User = get_user_model()
 
+
+from django.db import models
+from django.db.models import JSONField
+
+def default_permissions():
+    return {
+        "project": {"view": True, "create": False, "update": False, "delete": False},
+        "issue": {"view": True, "create": False, "update": False, "delete": False},
+        "pullreqs": {"view": False, "create": False, "update": False, "delete": False},
+    }
+
+class Role(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    permissions = JSONField(default=default_permissions)
+
+    def __str__(self):
+        return self.name
+
+
+class UserRole(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="assigned_role"
+    )
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} → {self.role.name if self.role else 'No Role'}"
 
 class Project(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
@@ -38,28 +65,22 @@ class Issue(models.Model):
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     label = models.CharField(max_length=50, choices=LABEL_CHOICES, default='bug')
+    
     assignee = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        User, on_delete=models.SET_NULL,
+        null=True, blank=True,
         related_name='assigned_issues'
-
-        # hfyghj
     )
     reviewer = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='review_issues'
+        User, on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='reviewing_issues'
     )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.title} ({self.status})"
-
-
 
 
 class PullReq(models.Model):
@@ -71,7 +92,7 @@ class PullReq(models.Model):
 
     LABEL_CHOICES = [
         ('bug', 'Bug'),
-        ('development','Development'),
+        ('development', 'Development'),
         ('enhancement', 'Enhancement'),
         ('ui', 'Ui'),
         ('documentation', 'Documentation'),
@@ -85,47 +106,23 @@ class PullReq(models.Model):
     label = models.CharField(max_length=50, choices=LABEL_CHOICES, default='bug')
 
     issue = models.ForeignKey(
-        'Issue',                  # assuming your Issue model is called Issue
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='pullreqs'
+        Issue, on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='pull_requests'
     )
 
     assignee = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='assigned_pull'
+        User, on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='assigned_pullreqs'
     )
     reviewer = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='review_pul'
+        User, on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='reviewing_pullreqs'
     )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.title} ({self.status})"
-
-class UserPermission(models.Model):
-    RESOURCE_CHOICES=[
-        ("issue", "Issue"),
-        ("pullreq", "Pull Request"),
-        ("project", "Project"),
-    ]
-
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    resource=models.CharField(max_length=20,choices=RESOURCE_CHOICES)
-    can_view=models.BooleanField(default=False)
-    can_delete=models.BooleanField(default=False)
-    can_edit=models.BooleanField(default=False)
-    can_create=models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.user.username}->{self.resource}"
-
-    
