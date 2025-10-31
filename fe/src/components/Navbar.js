@@ -4,6 +4,7 @@ import api, { logout } from "../api";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
+  const [isSuperuser, setIsSuperuser] = useState(false);      
   const [projectName, setProjectName] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,6 +16,20 @@ export default function Navbar() {
       try {
         const res = await api.get("/check-auth/");
         setUser(res.data.user);
+      } catch {
+        setUser(null);
+      }
+    }
+    fetchUser();
+  }, []);
+
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await api.get("/check-auth/");
+        setUser(res.data.user);
+        setIsSuperuser(res.data.is_superuser);
       } catch {
         setUser(null);
       }
@@ -63,6 +78,11 @@ export default function Navbar() {
         <div style={styles.left}>
           <Link to="/" style={styles.link}>🏠 Home</Link>
         </div>
+        {isSuperuser && (
+           <Link to="/admin" style={styles.link}>
+              Admin Panel
+               </Link>
+            )}
 
         <div style={styles.right}>
           <span style={styles.user}>Welcome, {user}</span>

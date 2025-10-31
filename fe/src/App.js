@@ -12,21 +12,46 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
-// import
 import { initCSRF ,setGlobalErrorHandler} from "./api"; // to initialize CSRF token once
 import Errorpop from "./components/Errorpop";
+import AdminNavbar from "./components/AdminNavbar"; 
+import AdminHome from "./components/AdminHome";
+import RoleFormPage from "./components/RoleFormPage";
+import RoleList from "./components/RoleList";
+import UserRoleAssign from "./components/UserRoleAssign";
+
 
 function LayoutWithNavbar() {
   const location = useLocation();
   const hideNavbar = ["/login", "/register"].includes(location.pathname);//hide navbar
+  const isAdminRoute = location.pathname.startsWith("/admin"); // ✅ check admin pages
+
 
   return (
     <>
-      {!hideNavbar && <Navbar />}
-      <Routes>
+    {!hideNavbar && <Navbar />}
+    {/* Show admin navbar when on admin routes */}
+    {!hideNavbar && isAdminRoute && <AdminNavbar />} 
+
+      <Routes> 
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/admin/roles/new" element={<RoleFormPage />} />
+        <Route path="/admin/roles/:id" element={<RoleFormPage />} />
+        <Route path="admin/roles" element={<RoleList />} />
+        <Route path="admin/assign-role" element={<UserRoleAssign />} />
+
+
+        {/* ✅ Admin Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireSuperuser>
+              <AdminHome />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Protected Routes */}
         <Route
