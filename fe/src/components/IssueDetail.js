@@ -1,24 +1,66 @@
-// src/components/IssueDetail.js
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api";
+import IssueForm from "./IssueForm";
+import api, { getCookie } from "../api";
 
 export default function IssueDetail() {
-  const { projectId, issueId } = useParams();
+  const {  issueId } = useParams();
   const [issue, setIssue] = useState(null);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    api.get(`/projects/${projectId}/issues/${issueId}/`).then((res) => setIssue(res.data));
-  }, [projectId, issueId]);
+    api.get(`/issues/${issueId}/`).then((res) => setIssue(res.data));
+  }, [issueId]);
 
-  if (!issue) return <p>Loading...</p>;
+const handleUpdate = (data) => {
+  const csrfToken = getCookie("csrftoken"); // get CSRF token from cookie
 
+  api.patch(
+    `/issues/${issueId}/`,
+    data,
+    {
+      headers: {
+        "X-CSRFToken": csrfToken, // include CSRF token
+      },
+    }
+  )
+    .then((res) => {
+      setIssue(res.data);
+      setEditing(false);
+    })
+    .catch((err) => {
+      console.error("Error updating issue:", err);
+    });
+};
+
+if (!issue) return <div style={{ color: "white", padding: "20px" }}>Loading...</div>;
   return (
-    <div>
-      <h2>{issue.title}</h2>
-      <p>{issue.description}</p>
-      <p>Status: {issue.status}</p>
-      <p>Created: {new Date(issue.created_at).toLocaleString()}</p>
+    <div style={{ padding: "20px", color: "white", backgroundColor: "#1E1E1E", minHeight: "100vh" }}>
+      {editing ? (
+        <IssueForm issue={issue} onSubmit={handleUpdate} />
+      ) : (
+        <>
+          <h2>{issue.title}</h2>
+          <p>{issue.description}</p>
+          <p>Status: {issue.status}</p>
+          <p>Label: {issue.label}</p>
+          <p>Assignee: {issue.assignee?.username || "Unassigned"}</p>
+          <button
+            onClick={() => setEditing(true)}
+            style={{
+              padding: "8px 15px",
+              borderRadius: "4px",
+              border: "none",
+              backgroundColor: "#53ff5eff",
+              color: "#1E1E1E",
+              cursor: "pointer",
+              fontWeight: "600",
+            }}
+          >
+            Edit
+          </button>
+        </>
+      )}
     </div>
   );
 }
